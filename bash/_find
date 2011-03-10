@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# find a file whose name contains the specified string within the current directory tree
+
+args=("$@")
+search_string=${args[$#-1]}
+
+if [ $# -gt 1 ] ; then
+  # command options were specified
+  # only expecting one option: --source-tree, or -s for short
+  search_opt=$1
+fi
+
+if [[ $search_opt == "--source-tree" || $search_opt == "-s" ]] ; then
+  source_tree_opt=1
+fi
+
+# a source tree search will likely mean that we want to
+# ignore version control and build artifacts
+if [ $source_tree_opt ] ; then
+  find . -name \*$search_string\* | grep -v svn | grep -v target
+  exit
+fi
+
+find . -name \*$1\*
