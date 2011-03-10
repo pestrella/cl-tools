@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# implementation of missing 'watch' command in OSX
+
+script_name=`basename $0`
+BAD_ARGS=85
+args=( $(echo $@ | tr ' ' '\n') )
+
+usage() {
+  echo "Usage: $script_name [-n<delay>] cmd"
+}
+
+if [ $# -lt 1 ] ; then
+  usage
+  exit $BAD_ARGS
+fi
+
+delay_opt=$1
+if [[ $delay_opt == -n* ]] ; then
+  delay_opt="${delay_opt/-n}"
+
+  if [ $# -lt 2 ] ; then
+    # if a delay was set, then you need at least another arg,
+    # which represents the command you want to watch
+    usage
+    exit $BAD_ARGS
+  else
+    shift
+    cmd_opt=$@
+  fi
+else
+  delay_opt=""
+  cmd_opt=$@
+fi
+
+if [ -z "$delay_opt" ]
+then
+  # default delay is 2 secs
+  delay_opt=2
+fi
+
+if ! [[ "$delay_opt" =~ ^[0-9]+$ ]] ; then
+  usage
+  echo "error: delay was not a number"
+  exit $BAD_ARGS
+fi
+
+# execute the command and watch it
+while $cmd_opt; do sleep $delay_opt && clear; done
