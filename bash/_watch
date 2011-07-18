@@ -44,6 +44,7 @@ if ! [[ "$delay_opt" =~ ^[0-9]+$ ]] ; then
   echo "error: delay was not a number"
   exit $BAD_ARGS
 fi
-
 # execute the command and watch it
-while $cmd_opt; do sleep $delay_opt && clear; done
+cols=`tput cols`
+right_align=`expr $cols - 10`
+while printf "%${right_align}s\n" `date +"%Ts"`; eval $cmd_opt; do sleep $delay_opt && clear; done
