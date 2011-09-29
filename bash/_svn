@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Convenience wrapper around svn which allows you to add untracked files à la git commit -a
+
+svn --version &> /dev/null
+if [ $? -ne 0 ] ; then
+  echo "svn does exists in path."
+  exit 1
+fi
+
+usage="_svn ci [-a] '<comment>'"
+
+if [ $# -lt 2 ] ; then
+  echo "Expecting at least 2 arguments. Usage: $usage"
+  exit 1
+fi
+
+if [[ $1 != "ci" ]] ; then
+  echo "Unsupported operation: $1. Usage: $usage"
+  exit 1
+fi
+
+args=("$@")
+comment=${args[$#-1]}
+
+if [ $# -gt 2 ] ; then
+  # expecting only one other command option: -a
+  if [[ $2 != "-a" ]] ; then
+    echo "Unsupported option: $2. Usage: $usage"
+    exit 1
+  fi
+  auto_add_opt=1
+fi
+
+if [ $# -gt 3 ] ; then
+  echo "Too many arguments. Usage: $usage"
+  exit 1
+fi
+
+if [ $auto_add_opt ] ; then
+  # user wants to auto add untracked files
+  svn st | grep ^? | awk '{print $2}' | xargs svn add
+fi
+
+svn ci -m "\"$comment\""
