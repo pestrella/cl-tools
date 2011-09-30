@@ -4,7 +4,7 @@
 
 svn --version &> /dev/null
 if [ $? -ne 0 ] ; then
-  echo "svn does exists in path."
+  echo "svn does not exists in path."
   exit 1
 fi
 
