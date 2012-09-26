@@ -3,4 +3,4 @@
 # Lists the authors of a specified path in the current Git repository
 
 [ -z "$1" ] && echo "Usage: $0 /path/to/evaluate"
-git log -- $1 | grep -A1 Author: | awk '{ $1=""; print }'
+git log --format="%+aN %+aD" -- $1
